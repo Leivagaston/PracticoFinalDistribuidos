@@ -20,12 +20,12 @@ float numeroRandom;
 int main()
 {
     clock_t tiempoInicial, tiempoFinal;
-    int tamanioMatriz;
-    int cantidadSemanas;
+    int tamanioMatriz = 1500;
+    int cantidadSemanas = 1200;
     float porcentajeEnfermos;
-    printf("Ingrese el tamaño de la matriz\n");
-    fflush(stdin);
-    scanf("%d",&tamanioMatriz);
+    //printf("Ingrese el tamaño de la matriz\n");
+    //fflush(stdin);
+    //scanf("%d",&tamanioMatriz);
 
     int tamanioFinal = (tamanioMatriz*tamanioMatriz) + 4*tamanioMatriz;
     arbol *matrizCampo = NULL;
@@ -33,9 +33,9 @@ int main()
     arbol *matrizAux = NULL;
     matrizAux=(arbol*)malloc(tamanioFinal* sizeof(arbol));
     //arbol matrizAux[tamanioFinal];
-    printf("ingrese la cantidad de semanas a simular :  \n");
-    fflush(stdin);
-    scanf("%d", &cantidadSemanas);
+    //printf("ingrese la cantidad de semanas a simular :  \n");
+    //fflush(stdin);
+    //scanf("%d", &cantidadSemanas);
 
 
 ///Inicializar la matriz a partir de las diferentes probabilidades dadas
