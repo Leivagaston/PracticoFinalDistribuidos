@@ -1,1 +1,3 @@
 nodo3
+nodo2
+nodo4
