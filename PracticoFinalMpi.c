@@ -59,34 +59,34 @@ int main(int argc, char **argv) {
 	if(proceso == 0){
 		tiempoInicial = clock();
 		matrizCampo = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz original
-        matrizAux = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz auxilar
+        //matrizAux = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz auxilar
 		/// inicializo la matriz original
         int random;
    	 	for(int i=0; i<tamanioFinal; i++){
 
         	random = rand() % 101;
         	matrizCampo[i].semanasInfectado=0;
-        	matrizAux[i].semanasInfectado=0;
+        	//matrizAux[i].semanasInfectado=0;
         	matrizCampo[i].semanasTotales=0;
-        	matrizAux[i].semanasTotales=0;
+        	//matrizAux[i].semanasTotales=0;
         	matrizCampo[i].semanasPodado=0;
-        	matrizAux[i].semanasPodado=0;
+        	//matrizAux[i].semanasPodado=0;
         	///asignacion de colores para los arboles
         	if(random<65){
             	matrizCampo[i].color = 5; ///Arbol Sano (verde)
-            	matrizAux[i].color = 5;
+            	//matrizAux[i].color = 5;
         	}else{
             	if(random>=65 && random<70){
                 		matrizCampo[i].color = 3;///Arbol con sintomas (rojo)
-                		matrizAux[i].color = 3;
+                		//matrizAux[i].color = 3;
             	}else{
                 		if(random>=70 && random<80){
                     		matrizCampo[i].color = 4;///Arbol enfermo sin sintomas (naranja)
-                   		matrizAux[i].color = 4;
+                   		//matrizAux[i].color = 4;
                	 }else{
                     	if(random>=80 && random<=100){
                         	matrizCampo[i].color = 2; ///Arbol con tratamiento (azul)
-                        	matrizAux[i].color = 2;
+                        	//matrizAux[i].color = 2;
                     		}
                 		}
             	}
@@ -94,16 +94,16 @@ int main(int argc, char **argv) {
 		///asignacion de edad de los arboles
         	if(random<30){
             	matrizCampo[i].edad = 52; ///Arbol joven
-            	matrizAux[i].edad = 52;
+            	//matrizAux[i].edad = 52;
         	}
         	else{
             	if(random>=30 && random<80){
             	matrizCampo[i].edad = 157; ///Arbol adulto
-           		matrizAux[i].edad = 157;
+           		//matrizAux[i].edad = 157;
             	}else{
                 		if(random>=80 && random<=100){
                     	matrizCampo[i].edad = 1821; ///Arbol viejo)
-                    	matrizAux[i].edad = 1821;
+                    	//matrizAux[i].edad = 1821;
                	 	}
             	}
        	 }
@@ -111,9 +111,9 @@ int main(int argc, char **argv) {
             fila++;
         	}
         	matrizCampo[i].fila = fila;
-        	matrizAux[i].fila = fila;
+        	//matrizAux[i].fila = fila;
         	matrizCampo[i].heridas=0;
-        	matrizAux[i].heridas=0;
+        	//matrizAux[i].heridas=0;
     		} /// fin for inicializacion del campo de arboles
 
 //printf("Hasta aca vamos bien \n");
@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
 
 
 MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal, (filasXproceso*tamanioMatriz*sizeof(arbol)), MPI_BYTE, 0, MPI_COMM_WORLD);
-MPI_Scatter(matrizAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocalAux, (filasXproceso*tamanioMatriz*sizeof(arbol)), MPI_BYTE, 0, MPI_COMM_WORLD);
+//MPI_Scatter(matrizAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocalAux, (filasXproceso*tamanioMatriz*sizeof(arbol)), MPI_BYTE, 0, MPI_COMM_WORLD);
 
 
 //printf("pasamos el scatter\n");
