@@ -818,20 +818,9 @@ printf("pasamos el scatter\n");
 
 } /// fin for para explorar vecinos
 
-//MPI_Barrier(MPI_COMM_WORLD);
-//printf("cambio de matriz campo a campo\n");
-/*for(int i =0; i<filasXproceso; i++){
-    matrizLocal[i].color = matrizLocalAux[i].color;
-    matrizLocal[i].edad = matrizLocalAux[i].edad;
-    matrizLocal[i].heridas = matrizLocalAux[i].heridas;
-    matrizLocal[i].semanasInfectado= matrizLocalAux[i].semanasInfectado;
-    matrizLocal[i].semanasTotales = matrizLocalAux[i].semanasTotales;
-    matrizLocal[i].semanasPodado = matrizLocalAux[i].semanasPodado;
 
-}*/
-
-//printf("vuelta numero %d\n", semana);
-//MPI_Barrier(MPI_COMM_WORLD);
+printf("vuelta numero %d\n", semana);
+MPI_Barrier(MPI_COMM_WORLD);
 MPI_Gather(matrizLocalAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE,0,MPI_COMM_WORLD );
 
 }/// fin for semanas
