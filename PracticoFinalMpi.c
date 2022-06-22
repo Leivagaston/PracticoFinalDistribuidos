@@ -817,7 +817,7 @@ printf("pasamos el scatter\n");
 
 //MPI_Barrier(MPI_COMM_WORLD);
 //printf("cambio de matriz campo a campo\n");
-*/for(int i =0; i<filasXproceso; i++){
+/*for(int i =0; i<filasXproceso; i++){
     matrizLocal[i].color = matrizLocalAux[i].color;
     matrizLocal[i].edad = matrizLocalAux[i].edad;
     matrizLocal[i].heridas = matrizLocalAux[i].heridas;
