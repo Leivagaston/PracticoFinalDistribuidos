@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 1500
+#define tamanioMatriz 800
 #define cantEjecuciones 10
 #define cantSemanas 1200
 
