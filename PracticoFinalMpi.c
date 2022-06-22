@@ -122,12 +122,12 @@ int main(int argc, char **argv) {
 }
 
 
-printf("antes del scatter y vuelta numero %d\n", ejecuciones);
-MPI_Barrier(MPI_COMM_WORLD);
+//printf("antes del scatter y vuelta numero %d\n", ejecuciones);
+//MPI_Barrier(MPI_COMM_WORLD);
 MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,filasXproceso*sizeof(arbol), MPI_BYTE, 0, MPI_COMM_WORLD);
 
 
-printf("pasamos el scatter\n");
+//printf("pasamos el scatter\n");
 
     int filasAbajo = (filasXproceso) - (2*tamanioMatriz);
     int arbolesContagiando;
