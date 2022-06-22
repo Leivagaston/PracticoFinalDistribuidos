@@ -267,7 +267,7 @@ printf("pasamos el scatter\n");
         }
 
         if(indice<tamanioMatriz){ /// caso comunicarse con las filas recibidas si es la primera fila
-
+		printf("caso primera fila\n");
             if(matrizLocal[indice].fila-1 == arregloArriba[indice+tamanioMatriz].fila){
                 if(arregloArriba[indice+tamanioMatriz].color == 3){
                     arbolesContagiando++;
@@ -344,7 +344,8 @@ printf("pasamos el scatter\n");
         }
 
         if(indice > tamanioMatriz-1 && indice < tamanioMatriz*2){ ///caso comunicacion si es la segunda fila
-            if(matrizLocal[indice].fila -2 == arregloArriba[indice].fila){
+            printf("caso segunda fila\n");
+		if(matrizLocal[indice].fila -2 == arregloArriba[indice].fila){
                 if(arregloArriba[indice].color == 3){
                     arbolesContagiando++;
                 }
@@ -410,7 +411,8 @@ printf("pasamos el scatter\n");
         }
 
         if(indice >= (filasXproceso - tamanioMatriz*2) && indice < (filasXproceso - tamanioMatriz)){ ///caso ante ultima fila
-            if(matrizLocal[indice].fila+2 == arregloAbajo[indiceAbajo].fila){
+            printf("caso penultima fila\n");
+		if(matrizLocal[indice].fila+2 == arregloAbajo[indiceAbajo].fila){
                 if(arregloAbajo[indice].color == 3){
                     arbolesContagiando++;
                 }
@@ -492,7 +494,7 @@ printf("pasamos el scatter\n");
         }
         /// caso ultima fila
         if(indice >= filasXproceso  - tamanioMatriz && indice < filasXproceso ){
-
+		printf("caso ultima fila\n");
             if(matrizLocal[indice].fila +1 == arregloAbajo[indiceAbajoB].fila){
                 if(arregloAbajo[indiceAbajoB].color == 3){
                     arbolesContagiando++;
@@ -578,6 +580,7 @@ printf("pasamos el scatter\n");
 
         /// casos generales
         if((indice >= tamanioMatriz*2) && (indice< filasXproceso-(2*tamanioMatriz)) ){
+		printf("caso general\n");
         if(matrizLocal[indice].fila +1 == matrizLocal[indice + tamanioMatriz].fila){
                 if(matrizLocal[indice + tamanioMatriz].color == 3){
                     arbolesContagiando++;
