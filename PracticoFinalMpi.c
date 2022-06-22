@@ -2,9 +2,9 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 200
+#define tamanioMatriz 500
 #define cantEjecuciones 5
-#define cantSemanas 1200
+#define cantSemanas 100
 
 typedef struct celda
 {
@@ -34,9 +34,9 @@ int main(int argc, char **argv) {
     MPI_Comm_size(MPI_COMM_WORLD,&cantProcesos);// Obtener la cantidad de procesos
     MPI_Comm_rank(MPI_COMM_WORLD,&proceso);// Obtener el número de proceso
     
-    int tamReparto = tamanioMatriz*2;
+    int tamReparto = (tamanioMatriz*2);
 	arbol *matrizCampo = NULL;
-	arbol *matrizAux= NULL;
+
 	/// matrices donde reciben su parte los procesos
 	arbol *matrizLocal = NULL;
 	arbol *matrizLocalAux = NULL;
@@ -60,7 +60,6 @@ int main(int argc, char **argv) {
 	if(proceso == 0){
 		tiempoInicial = clock();
 		matrizCampo = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz original
-        //matrizAux = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz auxilar
 		/// inicializo la matriz original
         int random;
    	 	for(int i=0; i<tamanioFinal; i++){
@@ -117,17 +116,17 @@ int main(int argc, char **argv) {
         	
     		} /// fin for inicializacion del campo de arboles
 
-//printf("Hasta aca vamos bien \n");
+printf("Hasta aca vamos bien \n");
 ///fin if del proceso 0
 }
 
 
-//printf("antes del scatter y vuelta numero %d\n", ejecuciones);
-//MPI_Barrier(MPI_COMM_WORLD);
+printf("antes del scatter y vuelta numero %d\n", ejecuciones);
+MPI_Barrier(MPI_COMM_WORLD);
 MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,filasXproceso*sizeof(arbol), MPI_BYTE, 0, MPI_COMM_WORLD);
 
 
-//printf("pasamos el scatter\n");
+printf("pasamos el scatter\n");
 
     int filasAbajo = (filasXproceso) - (2*tamanioMatriz);
     int arbolesContagiando;
@@ -160,13 +159,13 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
 
     }
-    //printf("antes del for de las semanas\n");
+    printf("antes del for de las semanas\n");
 
     for(int semana =0; semana < cantSemanas; semana++){
         indiceAbajo=0;
         indiceAbajoB=0;
         filasAbajo = (filasXproceso) - (2*tamanioMatriz);
-        //printf("dentro del for y antes de copiar las filas\n");
+        printf("dentro del for y antes de copiar las filas\n");
         if(proceso!=0){
         for(int i = 0; i<(tamanioMatriz*2); i++){
             arregloAuxA[i].color = matrizLocal[i].color;
@@ -178,8 +177,8 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
             arregloAuxA[i].semanasTotales = matrizLocal[i].semanasTotales;
             }
         }
-        //printf("copio las filas de arriba\n");
-        //MPI_Barrier(MPI_COMM_WORLD);
+        printf("copio las filas de arriba\n");
+        MPI_Barrier(MPI_COMM_WORLD);
 
         if(proceso != cantProcesos-1){
         for(int j= 0; j<(tamanioMatriz*2); j++){
@@ -193,43 +192,40 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
             filasAbajo++;
         }
         }
-        //printf("copio las filas de abajo\n");
+        printf("copio las filas de abajo\n");
 
 
         ///mando las filas que necesita el proceso -1 y +1
-        //MPI_Barrier(MPI_COMM_WORLD);        
-        //printf("antes de pasar a los envios y recepcion\n");
+        MPI_Barrier(MPI_COMM_WORLD);        
+        printf("antes de pasar a los envios y recepcion\n");
         
         if(proceso != 0){
-        //printf("entro diferente de 0\n");
-        MPI_Isend(arregloAuxA, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
-        MPI_Wait(&request, &status);
-        //printf("mandaron tdo\n");
-        MPI_Irecv(arregloArriba,(tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
-        //printf("saliendo de todos los procesos diferentes de 0\n");
-        MPI_Wait(&request, &status);
+            MPI_Isend(arregloAuxA, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
+            MPI_Wait(&request, &status);
+            
+        }
+        
+        if(proceso != cantProcesos-1){
+            MPI_Irecv(arregloAbajo,(tamReparto*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &request);
+            MPI_Wait(&request, &status);
         }
 
         if(proceso != cantProcesos-1){
-        MPI_Isend(arregloAuxB, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &request);
-	MPI_Wait(&request, &status);
-        MPI_Irecv(arregloAbajo,(tamReparto*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &request);
-	MPI_Wait(&request, &status);
-        //printf("saliendo de todos los procesos diferentes del ultimo\n");
+            MPI_Isend(arregloAuxB, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &request);
+            MPI_Wait(&request, &status);
+            
         }
-        ///ahora recibo las filas que necesita cada proceso
 
-        /*if(proceso != 0){
-        MPI_Recv(arregloArriba,((2*tamanioMatriz)*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &status);
+        if(proceso != 0){
+            MPI_Irecv(arregloArriba,(tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
+            MPI_Wait(&request, &status);
         }
-        if(proceso != cantProcesos-1){
-        MPI_Recv(arregloAbajo,((2*tamanioMatriz)*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &status);
-        }*/
+        
 
         ///comienzo para logica de los vecinos
         
-        //MPI_Barrier(MPI_COMM_WORLD);
-        //printf("se envio y recibio todo parece\n");
+        MPI_Barrier(MPI_COMM_WORLD);
+        printf("se envio y recibio todo parece\n");
         for(int indice =0; indice< filasXproceso; indice++){
             arbolesContagiando=0;
             vecinosVisitados=0;
@@ -847,7 +843,6 @@ fila =-1;
 }
 printf("El tiempo promedio total fue: %f\n", (double)(tiempoFinal/10)/CLOCKS_PER_SEC);
 free((void*)matrizCampo);
-free((void*)matrizAux);
 free((void*)matrizLocal);
 free((void*)matrizLocalAux);
 free((void*)arregloAbajo);
