@@ -2,9 +2,9 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 150
+#define tamanioMatriz 1500
 #define cantEjecuciones 10
-#define cantSemanas 1000
+#define cantSemanas 1200
 
 typedef struct celda
 {
@@ -160,7 +160,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
 
     }
-    printf("antes del for de las semanas\n");
+    //printf("antes del for de las semanas\n");
 
     for(int semana =0; semana < cantSemanas; semana++){
         indiceAbajo=0;
