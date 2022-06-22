@@ -2,9 +2,9 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 50
+#define tamanioMatriz 150
 #define cantEjecuciones 10
-#define cantSemanas 1200
+#define cantSemanas 1000
 
 typedef struct celda
 {
@@ -33,7 +33,8 @@ int main(int argc, char **argv) {
     MPI_Request request; //Para usar en el MPI_Test
     MPI_Comm_size(MPI_COMM_WORLD,&cantProcesos);// Obtener la cantidad de procesos
     MPI_Comm_rank(MPI_COMM_WORLD,&proceso);// Obtener el número de proceso
-
+    
+    int tamReparto = tamanioMatriz*2;
 	arbol *matrizCampo = NULL;
 	arbol *matrizAux= NULL;
 	/// matrices donde reciben su parte los procesos
@@ -49,44 +50,44 @@ int main(int argc, char **argv) {
     filasXproceso = (tamanioFinal/cantProcesos);
     matrizLocal = (arbol*)malloc(filasXproceso*sizeof(arbol));
     matrizLocalAux= (arbol*)malloc(filasXproceso*sizeof(arbol));
-    arregloArriba = (arbol*)malloc(2*tamanioMatriz*sizeof(arbol));
-    arregloAbajo = (arbol*)malloc(2*tamanioMatriz*sizeof(arbol));
-    arregloAuxA = (arbol*)malloc(2*tamanioMatriz*sizeof(arbol));
-    arregloAuxB = (arbol*)malloc(2*tamanioMatriz*sizeof(arbol));
+    arregloArriba = (arbol*)malloc(tamReparto*sizeof(arbol));
+    arregloAbajo = (arbol*)malloc(tamReparto*sizeof(arbol));
+    arregloAuxA = (arbol*)malloc(tamReparto*sizeof(arbol));
+    arregloAuxB = (arbol*)malloc(tamReparto*sizeof(arbol));
 
     for(int ejecuciones = 0; ejecuciones < cantEjecuciones; ejecuciones++){
 
 	if(proceso == 0){
 		tiempoInicial = clock();
 		matrizCampo = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz original
-        matrizAux = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz auxilar
+        //matrizAux = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz auxilar
 		/// inicializo la matriz original
         int random;
    	 	for(int i=0; i<tamanioFinal; i++){
 
         	random = rand() % 101;
         	matrizCampo[i].semanasInfectado=0;
-        	matrizAux[i].semanasInfectado=0;
+      
         	matrizCampo[i].semanasTotales=0;
-        	matrizAux[i].semanasTotales=0;
+
         	matrizCampo[i].semanasPodado=0;
-        	matrizAux[i].semanasPodado=0;
+        
         	///asignacion de colores para los arboles
         	if(random<65){
             	matrizCampo[i].color = 5; ///Arbol Sano (verde)
-            	matrizAux[i].color = 5;
+            	
         	}else{
             	if(random>=65 && random<70){
                 		matrizCampo[i].color = 3;///Arbol con sintomas (rojo)
-                		matrizAux[i].color = 3;
+                	
             	}else{
                 		if(random>=70 && random<80){
                     		matrizCampo[i].color = 4;///Arbol enfermo sin sintomas (naranja)
-                   		matrizAux[i].color = 4;
+                   		
                	 }else{
                     	if(random>=80 && random<=100){
                         	matrizCampo[i].color = 2; ///Arbol con tratamiento (azul)
-                        	matrizAux[i].color = 2;
+                        	
                     		}
                 		}
             	}
@@ -94,16 +95,16 @@ int main(int argc, char **argv) {
 		///asignacion de edad de los arboles
         	if(random<30){
             	matrizCampo[i].edad = 52; ///Arbol joven
-            	matrizAux[i].edad = 52;
+            	
         	}
         	else{
             	if(random>=30 && random<80){
             	matrizCampo[i].edad = 157; ///Arbol adulto
-           		matrizAux[i].edad = 157;
+           		
             	}else{
                 		if(random>=80 && random<=100){
                     	matrizCampo[i].edad = 1821; ///Arbol viejo)
-                    	matrizAux[i].edad = 1821;
+                    	
                	 	}
             	}
        	 }
@@ -111,9 +112,9 @@ int main(int argc, char **argv) {
             fila++;
         	}
         	matrizCampo[i].fila = fila;
-        	matrizAux[i].fila = fila;
+        	
         	matrizCampo[i].heridas=0;
-        	matrizAux[i].heridas=0;
+        	
     		} /// fin for inicializacion del campo de arboles
 
 //printf("Hasta aca vamos bien \n");
@@ -121,13 +122,12 @@ int main(int argc, char **argv) {
 }
 
 
+printf("antes del scatter y vuelta numero %d\n", ejecuciones);
+MPI_Barrier(MPI_COMM_WORLD);
+MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,filasXproceso*sizeof(arbol), MPI_BYTE, 0, MPI_COMM_WORLD);
 
 
-MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal, (filasXproceso*tamanioMatriz*sizeof(arbol)), MPI_BYTE, 0, MPI_COMM_WORLD);
-MPI_Scatter(matrizAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocalAux, (filasXproceso*tamanioMatriz*sizeof(arbol)), MPI_BYTE, 0, MPI_COMM_WORLD);
-
-
-//printf("pasamos el scatter\n");
+printf("pasamos el scatter\n");
 
     int filasAbajo = (filasXproceso) - (2*tamanioMatriz);
     int arbolesContagiando;
@@ -142,6 +142,8 @@ MPI_Scatter(matrizAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocalAux, (f
     float susceptibilidad;
     float probabilidadContagio;
     float porcentajeEnfermos;
+
+    
 
 
     if(proceso == 0){
@@ -158,12 +160,13 @@ MPI_Scatter(matrizAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocalAux, (f
         }
 
     }
+    printf("antes del for de las semanas\n");
 
     for(int semana =0; semana < cantSemanas; semana++){
         indiceAbajo=0;
         indiceAbajoB=0;
         filasAbajo = (filasXproceso) - (2*tamanioMatriz);
-
+        //printf("dentro del for y antes de copiar las filas\n");
         if(proceso!=0){
         for(int i = 0; i<(tamanioMatriz*2); i++){
             arregloAuxA[i].color = matrizLocal[i].color;
@@ -175,6 +178,8 @@ MPI_Scatter(matrizAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocalAux, (f
             arregloAuxA[i].semanasTotales = matrizLocal[i].semanasTotales;
             }
         }
+        //printf("copio las filas de arriba\n");
+        //MPI_Barrier(MPI_COMM_WORLD);
 
         if(proceso != cantProcesos-1){
         for(int j= 0; j<(tamanioMatriz*2); j++){
@@ -188,27 +193,41 @@ MPI_Scatter(matrizAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocalAux, (f
             filasAbajo++;
         }
         }
+        //printf("copio las filas de abajo\n");
 
 
         ///mando las filas que necesita el proceso -1 y +1
-
-        if(proceso!=0){
-        MPI_Send(arregloAuxA, (2*tamanioMatriz*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD);
+        //MPI_Barrier(MPI_COMM_WORLD);        
+        //printf("antes de pasar a los envios y recepcion\n");
+        
+        if(proceso != 0){
+        //printf("entro diferente de 0\n");
+        MPI_Isend(arregloAuxA, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
+        MPI_Wait(&request, &status);
+        //printf("mandaron tdo\n");
+        MPI_Irecv(arregloArriba,(tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
+        //printf("saliendo de todos los procesos diferentes de 0\n");
+        MPI_Wait(&request, &status);
         }
+
         if(proceso != cantProcesos-1){
-        MPI_Send(arregloAuxB, (2*tamanioMatriz*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD);
+        MPI_Isend(arregloAuxB, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &request);
+        MPI_Irecv(arregloAbajo,(tamReparto*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &request);
+        //printf("saliendo de todos los procesos diferentes del ultimo\n");
         }
         ///ahora recibo las filas que necesita cada proceso
 
-        if(proceso != 0){
+        /*if(proceso != 0){
         MPI_Recv(arregloArriba,((2*tamanioMatriz)*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &status);
         }
         if(proceso != cantProcesos-1){
         MPI_Recv(arregloAbajo,((2*tamanioMatriz)*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &status);
-        }
+        }*/
 
         ///comienzo para logica de los vecinos
-
+        
+        //MPI_Barrier(MPI_COMM_WORLD);
+        //printf("se envio y recibio todo parece\n");
         for(int indice =0; indice< filasXproceso; indice++){
             arbolesContagiando=0;
             vecinosVisitados=0;
@@ -798,6 +817,8 @@ MPI_Scatter(matrizAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocalAux, (f
 
 } /// fin for para explorar vecinos
 
+//MPI_Barrier(MPI_COMM_WORLD);
+//printf("cambio de matriz campo a campo\n");
 for(int i =0; i<filasXproceso; i++){
     matrizLocal[i].color = matrizLocalAux[i].color;
     matrizLocal[i].edad = matrizLocalAux[i].edad;
@@ -809,7 +830,7 @@ for(int i =0; i<filasXproceso; i++){
 }
 
 //printf("vuelta numero %d\n", semana);
-
+//MPI_Barrier(MPI_COMM_WORLD);
 MPI_Gather(matrizLocal,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE,0,MPI_COMM_WORLD );
 
 }/// fin for semanas

@@ -20,12 +20,12 @@ float numeroRandom;
 int main()
 {
     clock_t tiempoInicial, tiempoFinal;
-    int tamanioMatriz = 50;
-    int cantidadSemanas = 1200; // 25 años
+    int tamanioMatriz;
+    int cantidadSemanas;
     float porcentajeEnfermos;
-    //printf("Ingrese el tamaño de la matriz\n");
-    //fflush(stdin);
-    //scanf("%d",&tamanioMatriz);
+    printf("Ingrese el tamaño de la matriz\n");
+    fflush(stdin);
+    scanf("%d",&tamanioMatriz);
 
     int tamanioFinal = (tamanioMatriz*tamanioMatriz) + 4*tamanioMatriz;
     arbol *matrizCampo = NULL;
@@ -33,9 +33,9 @@ int main()
     arbol *matrizAux = NULL;
     matrizAux=(arbol*)malloc(tamanioFinal* sizeof(arbol));
     //arbol matrizAux[tamanioFinal];
-    //printf("ingrese la cantidad de semanas a simular :  \n");
-    //fflush(stdin);
-    //scanf("%d", &cantidadSemanas);
+    printf("ingrese la cantidad de semanas a simular :  \n");
+    fflush(stdin);
+    scanf("%d", &cantidadSemanas);
 
 
 ///Inicializar la matriz a partir de las diferentes probabilidades dadas
@@ -56,16 +56,19 @@ int main()
     int randomParaSano;
     float susceptibilidad;
     float probabilidadContagio;
+ 
     for(cantEjecuciones=0; cantEjecuciones<10; cantEjecuciones++){
-    tiempoInicial = clock();
+
+    #pragma omp parallel for private(i) num_threads(4)
     for(i=0; i<(tamanioMatriz*2); i++){
         matrizCampo[i].fila = -5;
         matrizAux[i].fila = -5;
         matrizAux[i].color = 10;
         matrizCampo[i].color = 10;
     }
+    #pragma omp parallel for  private(i,random) num_threads(4)
     for(i=tamanioMatriz*2; i<tamanioFinal-2*tamanioMatriz; i++){
-
+        tiempoInicial = clock();
         random = rand() % 101;
         matrizCampo[i].semanasInfectado=0;
         matrizAux[i].semanasInfectado=0;
@@ -117,7 +120,7 @@ int main()
         matrizCampo[i].heridas=0;
         matrizAux[i].heridas=0;
     }
-
+    #pragma omp parallel for private(i) num_threads(2)
     for(i=(tamanioFinal-2*tamanioMatriz); i<tamanioFinal; i++){
         matrizCampo[i].fila = tamanioMatriz+5;
         matrizAux[i].fila = tamanioMatriz+5;
@@ -141,6 +144,7 @@ for(semana = 0; semana < cantidadSemanas; semana++ ){
 
 //printf("\nSEMANA NUMERO : %d\n\n", semana);
 ///Recoleccion de informacion de los vecinos
+#pragma omp parallel for  private(indice, susceptibilidad, porcentajeEnfermos, probabilidadContagio, probHeridas, arbolesContagiando, vecinosVisitados) num_threads(4)
 for(indice =tamanioMatriz*2; indice< (tamanioFinal-2*tamanioMatriz); indice++){
     arbolesContagiando=0;
     vecinosVisitados=0;
@@ -422,15 +426,14 @@ for(indice =tamanioMatriz*2; indice< (tamanioFinal-2*tamanioMatriz); indice++){
 
 tiempoFinal = clock();
 double segundos = (double)(tiempoFinal-tiempoInicial) / CLOCKS_PER_SEC;
-printf("EL TIEMPO DE EJECUCION DE LA VUELTA  %d FUE: %f\n",cantEjecuciones+1,segundos);
+printf("EL TIEMPO DE EJECUCION DE UNA VUELTA FUE: %f\n", segundos);
 tiempototal += (tiempoFinal-tiempoInicial);
 fila =-1;
 
 
 }
 printf("El tiempo promedio total fue: %f\n", (double)(tiempoFinal/10)/CLOCKS_PER_SEC);
-free((void*)matrizCampo);
-free((void*)matrizAux);
+
 }
 
 
