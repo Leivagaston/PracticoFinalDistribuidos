@@ -1,1 +1,6 @@
+<<<<<<< HEAD
 nodo2
+=======
+nodo2
+nodo3
+>>>>>>> eef9dc85434c15ba451c865813d789b710bd00d9
