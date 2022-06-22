@@ -2,8 +2,8 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 800
-#define cantEjecuciones 10
+#define tamanioMatriz 200
+#define cantEjecuciones 5
 #define cantSemanas 1200
 
 typedef struct celda
@@ -212,7 +212,9 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
 
         if(proceso != cantProcesos-1){
         MPI_Isend(arregloAuxB, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &request);
+	MPI_Wait(&request, &status);
         MPI_Irecv(arregloAbajo,(tamReparto*sizeof(arbol)), MPI_BYTE, proceso+1, 0, MPI_COMM_WORLD, &request);
+	MPI_Wait(&request, &status);
         //printf("saliendo de todos los procesos diferentes del ultimo\n");
         }
         ///ahora recibo las filas que necesita cada proceso
