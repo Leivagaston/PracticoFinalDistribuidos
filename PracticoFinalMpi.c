@@ -580,7 +580,7 @@ printf("pasamos el scatter\n");
 
         /// casos generales
         if((indice >= tamanioMatriz*2) && (indice< filasXproceso-(2*tamanioMatriz)) ){
-		printf("caso general\n");
+		printf("caso general numero %d\n", indice);
         if(matrizLocal[indice].fila +1 == matrizLocal[indice + tamanioMatriz].fila){
                 if(matrizLocal[indice + tamanioMatriz].color == 3){
                     arbolesContagiando++;
