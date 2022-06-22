@@ -153,7 +153,7 @@ printf("pasamos el scatter\n");
     		}
     }
     if(proceso== cantProcesos-1){
-        for(int i = 0; i< tamanioMatriz*2; i++){
+        for(int i = 0; i< (tamanioMatriz*2); i++){
                 arregloAbajo[i].color = 10;
                 arregloAbajo[i].fila = tamanioMatriz+5;
         }
@@ -777,8 +777,8 @@ printf("pasamos el scatter\n");
 
     ///calculo cambio de estado
     if(matrizLocal[indice].color == 5){
-         porcentajeEnfermos = (arbolesContagiando/vecinosVisitados);
-         probabilidadContagio = (porcentajeEnfermos + susceptibilidad) *0.60 +0.07;
+         porcentajeEnfermos = (float)(arbolesContagiando/vecinosVisitados);
+         probabilidadContagio = (float)(porcentajeEnfermos + susceptibilidad) *0.60 +0.07;
          if(probabilidadContagio < ((rand()%1001)/1000.f)){
             matrizLocalAux[indice].color=4;
          }
@@ -817,7 +817,7 @@ printf("pasamos el scatter\n");
 
 //MPI_Barrier(MPI_COMM_WORLD);
 //printf("cambio de matriz campo a campo\n");
-for(int i =0; i<filasXproceso; i++){
+*/for(int i =0; i<filasXproceso; i++){
     matrizLocal[i].color = matrizLocalAux[i].color;
     matrizLocal[i].edad = matrizLocalAux[i].edad;
     matrizLocal[i].heridas = matrizLocalAux[i].heridas;
@@ -825,11 +825,11 @@ for(int i =0; i<filasXproceso; i++){
     matrizLocal[i].semanasTotales = matrizLocalAux[i].semanasTotales;
     matrizLocal[i].semanasPodado = matrizLocalAux[i].semanasPodado;
 
-}
+}*/
 
 //printf("vuelta numero %d\n", semana);
 //MPI_Barrier(MPI_COMM_WORLD);
-MPI_Gather(matrizLocal,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE,0,MPI_COMM_WORLD );
+MPI_Gather(matrizLocalAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE,0,MPI_COMM_WORLD );
 
 }/// fin for semanas
 
