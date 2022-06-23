@@ -56,10 +56,8 @@ int main(int argc, char **argv) {
     arregloAuxB = (arbol*)malloc(tamReparto*sizeof(arbol));
 
     for(int ejecuciones = 0; ejecuciones < cantEjecuciones; ejecuciones++){
-		tiempoInicial = 0;
-		tiempoFinal =0;
-	if(proceso == 0){
 		tiempoInicial = clock();
+	if(proceso == 0){
 		matrizCampo = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz original
 		/// inicializo la matriz original
         int random;
