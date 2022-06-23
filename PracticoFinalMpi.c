@@ -2,9 +2,9 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 500
+#define tamanioMatriz 200
 #define cantEjecuciones 5
-#define cantSemanas 1200
+#define cantSemanas 100
 
 typedef struct celda
 {
@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
 MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,filasXproceso*sizeof(arbol), MPI_BYTE, 0, MPI_COMM_WORLD);
 
 
-//printf("pasamos el scatter\n");
+printf("pasamos el scatter\n");
 
     int filasAbajo = (filasXproceso) - (2*tamanioMatriz);
     int arbolesContagiando;
