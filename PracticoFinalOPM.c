@@ -21,7 +21,7 @@ int main()
 {
     clock_t tiempoInicial, tiempoFinal;
     int tamanioMatriz = 1500;
-    int cantidadSemanas = 5;
+    int cantidadSemanas = 1200;
     float porcentajeEnfermos;
 
     int tamanioFinal = (tamanioMatriz*tamanioMatriz) + 4*tamanioMatriz;
@@ -50,7 +50,7 @@ int main()
     float susceptibilidad;
     float probabilidadContagio;
  
-    for(cantEjecuciones=0; cantEjecuciones<10; cantEjecuciones++){
+    for(cantEjecuciones=0; cantEjecuciones<5; cantEjecuciones++){
 
     #pragma omp parallel for private(i) num_threads(10)
     for(i=0; i<(tamanioMatriz*2); i++){
