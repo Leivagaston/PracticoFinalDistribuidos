@@ -2,9 +2,9 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 200
+#define tamanioMatriz 500
 #define cantEjecuciones 5
-#define cantSemanas 100
+#define cantSemanas 1000
 
 typedef struct celda
 {
