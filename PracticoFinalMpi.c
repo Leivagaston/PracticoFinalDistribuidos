@@ -4,7 +4,7 @@
 #include<mpi.h>
 #define tamanioMatriz 200
 #define cantEjecuciones 5
-#define cantSemanas 10
+#define cantSemanas 1000
 
 typedef struct celda
 {
@@ -116,17 +116,15 @@ int main(int argc, char **argv) {
         	
     		} /// fin for inicializacion del campo de arboles
 
-printf("Hasta aca vamos bien \n");
+//printf("Hasta aca vamos bien \n");
 ///fin if del proceso 0
 }
 
 
-printf("antes del scatter y vuelta numero %d\n", ejecuciones);
-MPI_Barrier(MPI_COMM_WORLD);
 MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,filasXproceso*sizeof(arbol), MPI_BYTE, 0, MPI_COMM_WORLD);
 
 
-printf("pasamos el scatter\n");
+//printf("pasamos el scatter\n");
 
     int filasAbajo = (filasXproceso) - (2*tamanioMatriz);
     int arbolesContagiando;
@@ -137,6 +135,7 @@ printf("pasamos el scatter\n");
     int probHeridas;
     int tratamiento;
     int cambio;
+    int indice = 0;
     int randomParaSano;
     float susceptibilidad;
     float probabilidadContagio;
@@ -159,13 +158,13 @@ printf("pasamos el scatter\n");
         }
 
     }
-    printf("antes del for de las semanas\n");
+    //printf("antes del for de las semanas\n");
 
     for(int semana =0; semana < cantSemanas; semana++){
         indiceAbajo=0;
         indiceAbajoB=0;
         filasAbajo = (filasXproceso) - (2*tamanioMatriz);
-        printf("dentro del for y antes de copiar las filas\n");
+        //printf("dentro del for y antes de copiar las filas\n");
         if(proceso!=0){
         for(int i = 0; i<(tamanioMatriz*2); i++){
             arregloAuxA[i].color = matrizLocal[i].color;
@@ -177,7 +176,7 @@ printf("pasamos el scatter\n");
             arregloAuxA[i].semanasTotales = matrizLocal[i].semanasTotales;
             }
         }
-        printf("copio las filas de arriba\n");
+        //printf("copio las filas de arriba\n");
         MPI_Barrier(MPI_COMM_WORLD);
 
         if(proceso != cantProcesos-1){
@@ -192,17 +191,16 @@ printf("pasamos el scatter\n");
             filasAbajo++;
         }
         }
-        printf("copio las filas de abajo\n");
+        //printf("copio las filas de abajo\n");
 
 
         ///mando las filas que necesita el proceso -1 y +1
         MPI_Barrier(MPI_COMM_WORLD);        
-        printf("antes de pasar a los envios y recepcion\n");
+        //printf("antes de pasar a los envios y recepcion\n");
         
         if(proceso != 0){
             MPI_Isend(arregloAuxA, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
             MPI_Wait(&request, &status);
-            
         }
         
         if(proceso != cantProcesos-1){
@@ -225,8 +223,8 @@ printf("pasamos el scatter\n");
         ///comienzo para logica de los vecinos
         
         MPI_Barrier(MPI_COMM_WORLD);
-        printf("se envio y recibio todo parece\n");
-        for(int indice =0; indice< filasXproceso; indice++){
+        //printf("se envio y recibio todo parece\n");
+        for(indice =0; indice< filasXproceso; indice++){
             arbolesContagiando=0;
             vecinosVisitados=0;
 
@@ -267,7 +265,7 @@ printf("pasamos el scatter\n");
         }
 
         if(indice<tamanioMatriz){ /// caso comunicarse con las filas recibidas si es la primera fila
-		printf("caso primera fila\n");
+		//printf("caso primera fila\n");
             if(matrizLocal[indice].fila-1 == arregloArriba[indice+tamanioMatriz].fila){
                 if(arregloArriba[indice+tamanioMatriz].color == 3){
                     arbolesContagiando++;
@@ -344,7 +342,7 @@ printf("pasamos el scatter\n");
         }
 
         if(indice > tamanioMatriz-1 && indice < tamanioMatriz*2){ ///caso comunicacion si es la segunda fila
-            printf("caso segunda fila\n");
+            //printf("caso segunda fila\n");
 		if(matrizLocal[indice].fila -2 == arregloArriba[indice].fila){
                 if(arregloArriba[indice].color == 3){
                     arbolesContagiando++;
@@ -411,7 +409,7 @@ printf("pasamos el scatter\n");
         }
 
         if(indice >= (filasXproceso - tamanioMatriz*2) && indice < (filasXproceso - tamanioMatriz)){ ///caso ante ultima fila
-            printf("caso penultima fila\n");
+            //printf("caso penultima fila\n");
 		if(matrizLocal[indice].fila+2 == arregloAbajo[indiceAbajo].fila){
                 if(arregloAbajo[indice].color == 3){
                     arbolesContagiando++;
@@ -494,7 +492,7 @@ printf("pasamos el scatter\n");
         }
         /// caso ultima fila
         if(indice >= filasXproceso  - tamanioMatriz && indice < filasXproceso ){
-		printf("caso ultima fila\n");
+		//printf("caso ultima fila\n");
             if(matrizLocal[indice].fila +1 == arregloAbajo[indiceAbajoB].fila){
                 if(arregloAbajo[indiceAbajoB].color == 3){
                     arbolesContagiando++;
@@ -580,7 +578,8 @@ printf("pasamos el scatter\n");
 
         /// casos generales
         if((indice >= tamanioMatriz*2) && (indice< filasXproceso-(2*tamanioMatriz)) ){
-		printf("caso general numero %d\n", indice);
+		//printf("caso general numero %d\n", indice);
+        MPI_Barrier(MPI_COMM_WORLD);
         if(matrizLocal[indice].fila +1 == matrizLocal[indice + tamanioMatriz].fila){
                 if(matrizLocal[indice + tamanioMatriz].color == 3){
                     arbolesContagiando++;
@@ -819,7 +818,7 @@ printf("pasamos el scatter\n");
 } /// fin for para explorar vecinos
 
 
-printf("vuelta numero %d\n", semana);
+//printf("vuelta numero %d\n", semana);
 MPI_Barrier(MPI_COMM_WORLD);
 MPI_Gather(matrizLocalAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE,0,MPI_COMM_WORLD );
 
@@ -828,7 +827,7 @@ MPI_Gather(matrizLocalAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizCampo,(f
 
 tiempoFinal = clock();
 double segundos = (double)(tiempoFinal-tiempoInicial) / CLOCKS_PER_SEC;
-//printf("EL TIEMPO DE EJECUCION DE LA VUELTA  %d FUE: %f\n",ejecuciones,segundos);
+printf("EL TIEMPO DE EJECUCION DE LA VUELTA  %d FUE: %f\n",ejecuciones,segundos);
 tiempototal += (tiempoFinal-tiempoInicial);
 fila =-1;
 
