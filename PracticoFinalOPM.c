@@ -21,7 +21,7 @@ int main()
 {
     clock_t tiempoInicial, tiempoFinal;
     int tamanioMatriz = 1500;
-    int cantidadSemanas = 1200;
+    int cantidadSemanas = 5;
     float porcentajeEnfermos;
 
     int tamanioFinal = (tamanioMatriz*tamanioMatriz) + 4*tamanioMatriz;
