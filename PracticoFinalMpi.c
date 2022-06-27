@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 400
+#define tamanioMatriz 150
 #define cantEjecuciones 2
 #define cantSemanas 1
 
@@ -62,6 +62,7 @@ int main(int argc, char **argv) {
 		matrizCampo = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz original
 		/// inicializo la matriz original
         int random;
+        fila =-1;
    	 	for(int i=0; i<tamanioFinal; i++){
 
         	random = rand() % 101;
@@ -123,8 +124,6 @@ int main(int argc, char **argv) {
 
 MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,filasXproceso*sizeof(arbol), MPI_BYTE, 0, MPI_COMM_WORLD);
 
-
-//printf("pasamos el scatter\n");
 
     int filasAbajo = (filasXproceso) - (2*tamanioMatriz);
     int arbolesContagiando;
@@ -197,6 +196,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         ///mando las filas que necesita el proceso -1 y +1
         //MPI_Barrier(MPI_COMM_WORLD);        
         //printf("antes de pasar a los envios y recepcion\n");
+
         
         if(proceso != 0){
             MPI_Isend(arregloAuxA, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
