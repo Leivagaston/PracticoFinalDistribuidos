@@ -221,8 +221,6 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         
 
         ///comienzo para logica de los vecinos
-        
-        MPI_Barrier(MPI_COMM_WORLD);
         //printf("se envio y recibio todo parece\n");
         for(indice =0; indice< filasXproceso; indice++){
             arbolesContagiando=0;
@@ -496,8 +494,6 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         
         }
 
-
-        MPI_Barrier(MPI_COMM_WORLD);
 
         if(indice >= (filasXproceso - tamanioMatriz*2) && indice < (filasXproceso - tamanioMatriz)){ ///caso ante ultima fila
             //printf("caso penultima fila y INDICE NUMERO:%d\n",indice);
@@ -827,7 +823,6 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
 
 
 //printf("vuelta numero %d\n", semana);
-MPI_Barrier(MPI_COMM_WORLD);
 MPI_Gather(matrizLocalAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE,0,MPI_COMM_WORLD );
 
 }/// fin for semanas
