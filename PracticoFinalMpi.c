@@ -2,9 +2,9 @@
 #include<stdlib.h>
 #include<time.h>
 #include<mpi.h>
-#define tamanioMatriz 800
-#define cantEjecuciones 2
-#define cantSemanas 1
+#define tamanioMatriz 1500
+#define cantEjecuciones 5
+#define cantSemanas 1200
 
 typedef struct celda
 {
@@ -265,7 +265,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
 
         if(indice<tamanioMatriz){ /// caso comunicarse con las filas recibidas si es la primera fila
-		printf("caso primera fila y INDICE NUMERO:%d y PROCESO: %d\n",indice,proceso);
+		//printf("caso primera fila y INDICE NUMERO:%d y PROCESO: %d\n",indice,proceso);
 
             if(matrizLocal[indice].fila-1 == arregloArriba[indice+tamanioMatriz].fila){
                 if(arregloArriba[indice+tamanioMatriz].color == 3){
@@ -343,7 +343,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
 
         if(indice > tamanioMatriz-1 && indice < tamanioMatriz*2){ ///caso comunicacion si es la segunda fila
-            printf("caso segunda fila y INDICE NUMERO:%d\n",indice);
+            //printf("caso segunda fila y INDICE NUMERO:%d\n",indice);
 		if(matrizLocal[indice].fila -2 == arregloArriba[indice].fila){
                 if(arregloArriba[indice].color == 3){
                     arbolesContagiando++;
@@ -413,7 +413,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         //MPI_Barrier(MPI_COMM_WORLD);
         if((indice >= tamanioMatriz*2) && (indice< filasXproceso-(2*tamanioMatriz)) ){
 
-		printf("caso general numero %d y PROCESO NUMERO: %d\n", indice, proceso);
+		//printf("caso general numero %d y PROCESO NUMERO: %d\n", indice, proceso);
 
         if(matrizLocal[indice].fila +1 == matrizLocal[indice + tamanioMatriz].fila){                
                 if(matrizLocal[indice + tamanioMatriz].color == 3){
@@ -500,7 +500,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         MPI_Barrier(MPI_COMM_WORLD);
 
         if(indice >= (filasXproceso - tamanioMatriz*2) && indice < (filasXproceso - tamanioMatriz)){ ///caso ante ultima fila
-            printf("caso penultima fila y INDICE NUMERO:%d\n",indice);
+            //printf("caso penultima fila y INDICE NUMERO:%d\n",indice);
 
 		if(matrizLocal[indice].fila+2 == arregloAbajo[indiceAbajo].fila){
                 if(arregloAbajo[indiceAbajo].color == 3){
@@ -581,12 +581,12 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
                 }
             }
         indiceAbajoB++;
-        printf("indice abajo B : %d\n", indiceAbajoB);
+        //printf("indice abajo B : %d\n", indiceAbajoB);
         }
         /// caso ultima fila
         if(indice >= (filasXproceso  - tamanioMatriz) && indice < filasXproceso ){
 		
-            printf("caso ultima fila y INDICE NUMERO:%d\n",indice);
+            //printf("caso ultima fila y INDICE NUMERO:%d\n",indice);
     
             if(matrizLocal[indice].fila +1 == arregloAbajo[indiceAbajoB].fila){
                 if(arregloAbajo[indiceAbajoB].color == 3){
@@ -668,7 +668,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
             }
 
         indiceAbajoB++;
-        printf("indice abajo B : %d\n", indiceAbajoB);
+        //printf("indice abajo B : %d\n", indiceAbajoB);
         }
 
         //printf("cantidad de arboles contagiando %d\n", arbolesContagiando);
