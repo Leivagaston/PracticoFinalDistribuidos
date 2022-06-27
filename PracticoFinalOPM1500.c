@@ -52,14 +52,14 @@ int main()
  
     for(cantEjecuciones=0; cantEjecuciones<5; cantEjecuciones++){
 
-    #pragma omp parallel for private(i) num_threads(5)
+    #pragma omp parallel for private(i) num_threads(10)
     for(i=0; i<(tamanioMatriz*2); i++){
         matrizCampo[i].fila = -5;
         matrizAux[i].fila = -5;
         matrizAux[i].color = 10;
         matrizCampo[i].color = 10;
     }
-    #pragma omp parallel for  private(i,random) num_threads(5)
+    #pragma omp parallel for  private(i,random) num_threads(10)
     for(i=tamanioMatriz*2; i<tamanioFinal-2*tamanioMatriz; i++){
         tiempoInicial = clock();
         random = rand() % 101;
@@ -137,7 +137,7 @@ for(semana = 0; semana < cantidadSemanas; semana++ ){
 
 //printf("\nSEMANA NUMERO : %d\n\n", semana);
 ///Recoleccion de informacion de los vecinos
-#pragma omp parallel for  private(indice, susceptibilidad, porcentajeEnfermos, probabilidadContagio, probHeridas, arbolesContagiando, vecinosVisitados) num_threads(5)
+#pragma omp parallel for  private(indice, susceptibilidad, porcentajeEnfermos, probabilidadContagio, probHeridas, arbolesContagiando, vecinosVisitados) num_threads(10)
 for(indice =tamanioMatriz*2; indice< (tamanioFinal-2*tamanioMatriz); indice++){
     arbolesContagiando=0;
     vecinosVisitados=0;
