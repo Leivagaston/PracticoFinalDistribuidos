@@ -117,7 +117,6 @@ int main(int argc, char **argv) {
         	
     		} /// fin for inicializacion del campo de arboles
 
-//printf("Hasta aca vamos bien \n");
 ///fin if del proceso 0
 }
 
@@ -163,8 +162,8 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         indiceAbajo=0;
         indiceAbajoB=0;
         filasAbajo = (filasXproceso) - (2*tamanioMatriz);
-        //printf("dentro del for y antes de copiar las filas\n");
         if(proceso!=0){
+
         for(int i = 0; i<(tamanioMatriz*2); i++){
             arregloAuxA[i].color = matrizLocal[i].color;
             arregloAuxA[i].edad = matrizLocal[i].edad;
@@ -191,12 +190,6 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
         }
         //printf("copio las filas de abajo\n");
-
-
-        ///mando las filas que necesita el proceso -1 y +1
-        //MPI_Barrier(MPI_COMM_WORLD);        
-        //printf("antes de pasar a los envios y recepcion\n");
-
         
         if(proceso != 0){
             MPI_Isend(arregloAuxA, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
@@ -221,12 +214,13 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         
 
         ///comienzo para logica de los vecinos
-        //printf("se envio y recibio todo parece\n");
+        
         for(indice =0; indice< filasXproceso; indice++){
             arbolesContagiando=0;
             vecinosVisitados=0;
 
-            if((matrizLocal[indice-1].fila == matrizLocal[indice].fila) && indice>0){
+            if(indice>0){            
+            if((matrizLocal[indice-1].fila == matrizLocal[indice].fila)){
                 if(matrizLocal[indice-1].color == 3){
                     arbolesContagiando+=1;
                 }
@@ -235,24 +229,31 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
                 }
 
             }
-
-            if((matrizLocal[indice-2].fila == matrizLocal[indice].fila) && indice>1){
+        }
+    
+            if(indice>1){
+            if((matrizLocal[indice-2].fila == matrizLocal[indice].fila)){
                 if(matrizLocal[indice-2].color == 3){
                     arbolesContagiando+=1;
                 }
                 if(matrizLocal[indice-2].fila >= 0){
                     vecinosVisitados+=1;}
             }
+            }
 
-            if((matrizLocal[indice+1].fila == matrizLocal[indice].fila) && indice<filasXproceso-1){
+            if(indice<filasXproceso-1){
+            if((matrizLocal[indice+1].fila == matrizLocal[indice].fila)){
                 if( matrizLocal[indice+1].color == 3){
                     arbolesContagiando+=1;}
                 if(matrizLocal[indice+1].fila < tamanioMatriz){
                     vecinosVisitados+=1;
             }
 
-         }
-           if((matrizLocal[indice+2].fila == matrizLocal[indice].fila) && indice<filasXproceso-2){
+             }
+        }
+
+            if(indice<filasXproceso-2){
+           if((matrizLocal[indice+2].fila == matrizLocal[indice].fila) ){
                 if(matrizLocal[indice+2].color == 3){
                     arbolesContagiando+=1;
                }
@@ -260,11 +261,10 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
                     vecinosVisitados+=1;
                }
 
+            }
         }
 
         if(indice<tamanioMatriz){ /// caso comunicarse con las filas recibidas si es la primera fila
-		//printf("caso primera fila y INDICE NUMERO:%d y PROCESO: %d\n",indice,proceso);
-
             if(matrizLocal[indice].fila-1 == arregloArriba[indice+tamanioMatriz].fila){
                 if(arregloArriba[indice+tamanioMatriz].color == 3){
                     arbolesContagiando++;
@@ -341,7 +341,6 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
 
         if(indice > tamanioMatriz-1 && indice < tamanioMatriz*2){ ///caso comunicacion si es la segunda fila
-            //printf("caso segunda fila y INDICE NUMERO:%d\n",indice);
 		if(matrizLocal[indice].fila -2 == arregloArriba[indice].fila){
                 if(arregloArriba[indice].color == 3){
                     arbolesContagiando++;
@@ -408,11 +407,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
 
         /// casos generales
-        //MPI_Barrier(MPI_COMM_WORLD);
         if((indice >= tamanioMatriz*2) && (indice< filasXproceso-(2*tamanioMatriz)) ){
-
-		//printf("caso general numero %d y PROCESO NUMERO: %d\n", indice, proceso);
-
         if(matrizLocal[indice].fila +1 == matrizLocal[indice + tamanioMatriz].fila){                
                 if(matrizLocal[indice + tamanioMatriz].color == 3){
                     arbolesContagiando++;
@@ -422,7 +417,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
                 }
             }
 
-            if(((indice + (tamanioMatriz +1))<filasXproceso) && (matrizLocal[indice].fila+1 == matrizLocal[indice + (tamanioMatriz +1)].fila) ){               
+            if((matrizLocal[indice].fila+1 == matrizLocal[indice + (tamanioMatriz +1)].fila) ){               
                 if(matrizLocal[indice + (tamanioMatriz +1)].color == 3){
                     arbolesContagiando++;
                 }
@@ -453,51 +448,48 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
             }
 
             if((matrizLocal[indice].fila-1 == matrizLocal[indice-tamanioMatriz].fila)){
-                if(arregloAbajo[indice-tamanioMatriz].color == 3){
+                if(matrizLocal[indice-tamanioMatriz].color == 3){
                     arbolesContagiando++;
                 }
 
-                if(arregloAbajo[indice-tamanioMatriz].fila < tamanioMatriz){
+                if(matrizLocal[indice-tamanioMatriz].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
 
             if((matrizLocal[indice].fila-1 == matrizLocal[indice-(tamanioMatriz+1)].fila)){
-                if(arregloAbajo[indice-(tamanioMatriz+1)].color == 3){
+                if(matrizLocal[indice-(tamanioMatriz+1)].color == 3){
                     arbolesContagiando++;
                 }
 
-                if(arregloAbajo[indice-(tamanioMatriz+1)].fila < tamanioMatriz){
+                if(matrizLocal[indice-(tamanioMatriz+1)].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
 
             if((matrizLocal[indice].fila-1 == matrizLocal[indice-(tamanioMatriz-1)].fila)){
-                if(arregloAbajo[indice-(tamanioMatriz-1)].color == 3){
+                if(matrizLocal[indice-(tamanioMatriz-1)].color == 3){
                     arbolesContagiando++;
                 }
 
-                if(arregloAbajo[indice-(tamanioMatriz-1)].fila < tamanioMatriz){
+                if(matrizLocal[indice-(tamanioMatriz-1)].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
 
             if((matrizLocal[indice].fila-2 == matrizLocal[indice-(2*tamanioMatriz)].fila)){
-                if(arregloAbajo[indice-(2*tamanioMatriz)].color == 3){
+                if(matrizLocal[indice-(2*tamanioMatriz)].color == 3){
                     arbolesContagiando++;
                 }
 
-                if(arregloAbajo[indice-(2*tamanioMatriz)].fila < tamanioMatriz){
+                if(matrizLocal[indice-(2*tamanioMatriz)].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
         
         }
 
-
         if(indice >= (filasXproceso - tamanioMatriz*2) && indice < (filasXproceso - tamanioMatriz)){ ///caso ante ultima fila
-            //printf("caso penultima fila y INDICE NUMERO:%d\n",indice);
-
 		if(matrizLocal[indice].fila+2 == arregloAbajo[indiceAbajo].fila){
                 if(arregloAbajo[indiceAbajo].color == 3){
                     arbolesContagiando++;
@@ -516,8 +508,8 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
                     vecinosVisitados++;
                 }
             }
-
-            if((matrizLocal[indice].fila +1 == matrizLocal[indice + (tamanioMatriz+1)].fila) && indice < filasXproceso-1){
+            ///
+            if((matrizLocal[indice].fila +1 == matrizLocal[indice + (tamanioMatriz+1)].fila)){
                 if(matrizLocal[indice + tamanioMatriz].color == 3){
                     arbolesContagiando++;
                 }
@@ -577,23 +569,27 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
                 }
             }
         indiceAbajoB++;
-        //printf("indice abajo B : %d\n", indiceAbajoB);
         }
         /// caso ultima fila
         if(indice >= (filasXproceso  - tamanioMatriz) && indice < filasXproceso ){
 		
-            //printf("caso ultima fila y INDICE NUMERO:%d\n",indice);
-    
+            printf("caso ultima fila y INDICE NUMERO:%d\n",indice);
+            if(indiceAbajoB == tamanioMatriz){
+                indiceAbajoB=0;
+            }
+
             if(matrizLocal[indice].fila +1 == arregloAbajo[indiceAbajoB].fila){
+                printf("entro1");                
                 if(arregloAbajo[indiceAbajoB].color == 3){
                     arbolesContagiando++;
                 }
-                if(arregloAbajo[indiceAbajo].fila < tamanioMatriz){
+                if(arregloAbajo[indiceAbajoB].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
 
-            if((matrizLocal[indice].fila+1 == arregloAbajo[indiceAbajoB-1].fila) && indiceAbajo>0){
+            if(indiceAbajoB>0){
+            if((matrizLocal[indice].fila+1 == arregloAbajo[indiceAbajoB-1].fila)){
                 if(arregloAbajo[indiceAbajoB-1].color == 3){
                     arbolesContagiando++;
                 }
@@ -601,9 +597,10 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
                 if(arregloAbajo[indiceAbajoB-1].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
+                }
             }
 
-            if((matrizLocal[indice].fila+1 == arregloAbajo[indiceAbajoB+1].fila) && indiceAbajo<tamanioMatriz){
+            if((matrizLocal[indice].fila+1 == arregloAbajo[indiceAbajoB+1].fila)){
                 if(arregloAbajo[indiceAbajoB+1].color == 3){
                     arbolesContagiando++;
                 }
@@ -624,54 +621,49 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
             }
 
             if((matrizLocal[indice].fila-1 == matrizLocal[indice-tamanioMatriz].fila)){
-                if(arregloAbajo[indice-tamanioMatriz].color == 3){
+                if(matrizLocal[indice-tamanioMatriz].color == 3){
                     arbolesContagiando++;
                 }
 
-                if(arregloAbajo[indice-tamanioMatriz].fila < tamanioMatriz){
+                if(matrizLocal[indice-tamanioMatriz].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
 
             if((matrizLocal[indice].fila-1 == matrizLocal[indice-(tamanioMatriz+1)].fila)){
-                if(arregloAbajo[indice-(tamanioMatriz+1)].color == 3){
+                if(matrizLocal[indice-(tamanioMatriz+1)].color == 3){
                     arbolesContagiando++;
                 }
 
-                if(arregloAbajo[indice-(tamanioMatriz+1)].fila < tamanioMatriz){
+                if(matrizLocal[indice-(tamanioMatriz+1)].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
 
             if((matrizLocal[indice].fila-1 == matrizLocal[indice-(tamanioMatriz-1)].fila)){
-                if(arregloAbajo[indice-(tamanioMatriz-1)].color == 3){
+                if(matrizLocal[indice-(tamanioMatriz-1)].color == 3){
                     arbolesContagiando++;
                 }
 
-                if(arregloAbajo[indice-(tamanioMatriz-1)].fila < tamanioMatriz){
+                if(matrizLocal[indice-(tamanioMatriz-1)].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
 
             if((matrizLocal[indice].fila-2 == matrizLocal[indice-(2*tamanioMatriz)].fila)){
-                if(arregloAbajo[indice-(2*tamanioMatriz)].color == 3){
+                if(matrizLocal[indice-(2*tamanioMatriz)].color == 3){
                     arbolesContagiando++;
                 }
 
-                if(arregloAbajo[indice-(2*tamanioMatriz)].fila < tamanioMatriz){
+                if(matrizLocal[indice-(2*tamanioMatriz)].fila < tamanioMatriz){
                     vecinosVisitados++;
                 }
             }
 
         indiceAbajoB++;
-        //printf("indice abajo B : %d\n", indiceAbajoB);
         }
 
-        //printf("cantidad de arboles contagiando %d\n", arbolesContagiando);
-        //printf("cantidad de vecinos visitados %d\n", vecinosVisitados);
-
         ///calculo de susceptibilidad
-
     if(matrizLocal[indice].edad < 157 ){
         if(matrizLocal[indice].heridas ==1){
         susceptibilidad =  0.35 + 0.15;
@@ -821,8 +813,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
 
 } /// fin for para explorar vecinos
 
-
-//printf("vuelta numero %d\n", semana);
+MPI_Barrier(MPI_COMM_WORLD);
 MPI_Gather(matrizLocalAux,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE,0,MPI_COMM_WORLD );
 
 }/// fin for semanas
