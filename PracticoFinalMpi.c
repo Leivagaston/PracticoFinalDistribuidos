@@ -56,9 +56,8 @@ int main(int argc, char **argv) {
     arregloAuxB = (arbol*)malloc(tamReparto*sizeof(arbol));
 
     for(int ejecuciones = 0; ejecuciones < cantEjecuciones; ejecuciones++){
-
+	tiempoInicial = clock();
 	if(proceso == 0){
-		tiempoInicial = clock();
 		matrizCampo = (arbol*)malloc(tamanioFinal*sizeof(arbol)); /// doy memoria a la matriz original
 		/// inicializo la matriz original
         int random;
@@ -823,7 +822,7 @@ tiempototal += (tiempoFinal-tiempoInicial);
 fila =-1;
 free((void*)matrizCampo);
 }
-printf("El tiempo promedio total fue: %f\n", (double)(tiempoFinal/10)/CLOCKS_PER_SEC);
+printf("El tiempo promedio total fue: %f\n", (double)(tiempototal/5)/CLOCKS_PER_SEC);
 
 free((void*)matrizLocal);
 free((void*)matrizLocalAux);
