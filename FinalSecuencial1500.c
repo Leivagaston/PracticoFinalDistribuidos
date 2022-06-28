@@ -56,7 +56,7 @@ int main()
     int randomParaSano;
     float susceptibilidad;
     float probabilidadContagio;
-    for(cantEjecuciones=0; cantEjecuciones<10; cantEjecuciones++){
+    for(cantEjecuciones=0; cantEjecuciones<5; cantEjecuciones++){
     tiempoInicial = clock();
     for(i=0; i<(tamanioMatriz*2); i++){
         matrizCampo[i].fila = -5;
@@ -428,7 +428,7 @@ fila =-1;
 
 
 }
-printf("El tiempo promedio total fue: %f\n", (double)(tiempoFinal/10)/CLOCKS_PER_SEC);
+printf("El tiempo promedio total fue: %f\n", (double)(tiempoFinal/5)/CLOCKS_PER_SEC);
 free((void*)matrizCampo);
 free((void*)matrizAux);
 }

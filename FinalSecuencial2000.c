@@ -20,7 +20,7 @@ float numeroRandom;
 int main()
 {
     clock_t tiempoInicial, tiempoFinal;
-    int tamanioMatriz = 500;
+    int tamanioMatriz = 2000;
     int cantidadSemanas = 1200; // 25 años
     float porcentajeEnfermos;
     //printf("Ingrese el tamaño de la matriz\n");
