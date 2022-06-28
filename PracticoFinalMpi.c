@@ -156,7 +156,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
 
     }
-    //printf("antes del for de las semanas\n");
+ 
 
     for(int semana =0; semana < cantSemanas; semana++){
         indiceAbajo=0;
@@ -174,8 +174,8 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
             arregloAuxA[i].semanasTotales = matrizLocal[i].semanasTotales;
             }
         }
-        //printf("copio las filas de arriba\n");
-        //MPI_Barrier(MPI_COMM_WORLD);
+      
+       
 
         if(proceso != cantProcesos-1){
         for(int j= 0; j<(tamanioMatriz*2); j++){
@@ -189,7 +189,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
             filasAbajo++;
         }
         }
-        //printf("copio las filas de abajo\n");
+  
         
         if(proceso != 0){
             MPI_Isend(arregloAuxA, (tamReparto*sizeof(arbol)), MPI_BYTE, proceso-1, 0, MPI_COMM_WORLD, &request);
@@ -508,7 +508,7 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
                     vecinosVisitados++;
                 }
             }
-            ///
+    
             if((matrizLocal[indice].fila +1 == matrizLocal[indice + (tamanioMatriz+1)].fila)){
                 if(matrizLocal[indice + tamanioMatriz].color == 3){
                     arbolesContagiando++;
@@ -572,14 +572,11 @@ MPI_Scatter(matrizCampo,(filasXproceso*sizeof(arbol)),MPI_BYTE, matrizLocal,fila
         }
         /// caso ultima fila
         if(indice >= (filasXproceso  - tamanioMatriz) && indice < filasXproceso ){
-		
-            printf("caso ultima fila y INDICE NUMERO:%d\n",indice);
             if(indiceAbajoB == tamanioMatriz){
                 indiceAbajoB=0;
             }
 
-            if(matrizLocal[indice].fila +1 == arregloAbajo[indiceAbajoB].fila){
-                printf("entro1");                
+            if(matrizLocal[indice].fila +1 == arregloAbajo[indiceAbajoB].fila){               
                 if(arregloAbajo[indiceAbajoB].color == 3){
                     arbolesContagiando++;
                 }
