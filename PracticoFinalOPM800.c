@@ -425,7 +425,7 @@ fila =-1;
 
 
 }
-printf("El tiempo promedio total fue: %f\n", (double)(tiempoFinal/10)/CLOCKS_PER_SEC);
+printf("El tiempo promedio total fue: %f\n", (double)(tiempototal/5)/CLOCKS_PER_SEC);
 
 }
 
