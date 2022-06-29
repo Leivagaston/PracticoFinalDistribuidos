@@ -51,7 +51,7 @@ int main()
     float probabilidadContagio;
  
     for(cantEjecuciones=0; cantEjecuciones<5; cantEjecuciones++){
-
+	tiempoInicial = clock();
     #pragma omp parallel for private(i) num_threads(10)
     for(i=0; i<(tamanioMatriz*2); i++){
         matrizCampo[i].fila = -5;
@@ -61,7 +61,7 @@ int main()
     }
     #pragma omp parallel for  private(i,random) num_threads(10)
     for(i=tamanioMatriz*2; i<tamanioFinal-2*tamanioMatriz; i++){
-        tiempoInicial = clock();
+        
         random = rand() % 101;
         matrizCampo[i].semanasInfectado=0;
         matrizAux[i].semanasInfectado=0;
