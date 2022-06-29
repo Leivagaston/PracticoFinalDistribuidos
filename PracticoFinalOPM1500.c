@@ -49,7 +49,7 @@ int main()
     int randomParaSano;
     float susceptibilidad;
     float probabilidadContagio;
- 
+ 	#pragma omp parallel for  private(i,random) num_threads(10)
     for(cantEjecuciones=0; cantEjecuciones<5; cantEjecuciones++){
 	tiempoInicial = clock();
     #pragma omp parallel for private(i) num_threads(10)
@@ -59,7 +59,7 @@ int main()
         matrizAux[i].color = 10;
         matrizCampo[i].color = 10;
     }
-    #pragma omp parallel for  private(i,random) num_threads(10)
+    
     for(i=tamanioMatriz*2; i<tamanioFinal-2*tamanioMatriz; i++){
         
         random = rand() % 101;
@@ -113,7 +113,7 @@ int main()
         matrizCampo[i].heridas=0;
         matrizAux[i].heridas=0;
     }
-    #pragma omp parallel for private(i) num_threads(10)
+ 
     for(i=(tamanioFinal-2*tamanioMatriz); i<tamanioFinal; i++){
         matrizCampo[i].fila = tamanioMatriz+5;
         matrizAux[i].fila = tamanioMatriz+5;
